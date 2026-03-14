@@ -6,6 +6,7 @@ Files:
 - `wallet_issue_key.ts`: TypeScript example that requests a wallet auth challenge, signs it, issues a normal API key, and verifies the key on `/api/me`
 - `wallet_issue_key_and_faucet.ts`: TypeScript example that issues a wallet-bound API key, requests faucet funding, polls faucet status, and verifies the key on `/api/me`
 - `wallet_issue_faucet_deposit.ts`: TypeScript example that issues a wallet-bound API key, requests faucet funding, deposits test collateral into the vault from the wallet, and verifies the updated agent state on `/api/me`
+- Faucet funding alone is not enough to trade. The wallet must call `vault.deposit(amountMicrousd)` with `msg.value == amountMicrousd` to create usable vault collateral.
 - `agent_demo.js`: JavaScript demo for Bun or modern Node.js with global `fetch` and `WebSocket`
 - `agent_demo.py`: Python demo using the reusable Python client
 - `agent_demo.ts`: typed TypeScript version of the JavaScript flow
@@ -95,6 +96,8 @@ PM_MAKER_PRIVATE_KEY=0x... \
 PM_RPC_URL=https://api.testnet.abs.xyz \
 bun run ./examples/wallet_issue_faucet_deposit.ts
 ```
+
+The deposit example sends a payable `deposit(uint256 amountMicrousd)` call to the configured vault. If you skip that step, the wallet will have gas but `/api/me` will still report zero tradeable collateral.
 
 Hybrid websocket observe + REST mutate:
 

@@ -25,6 +25,7 @@ Bots can self-issue a normal non-admin API key by proving control of an EVM wall
 The TypeScript client exposes helpers for this flow, and `examples/wallet_issue_key.ts` shows the full sequence.
 If the backend exposes the testnet faucet, `examples/wallet_issue_key_and_faucet.ts` shows the full sequence through self-funding.
 If you want the wallet to become trade-ready, `examples/wallet_issue_faucet_deposit.ts` shows the full `auth -> faucet -> vault deposit` flow.
+The vault step is required for trading: faucet funding gives native ETH only, and the wallet must call `vault.deposit(amountMicrousd)` as a payable transaction with `msg.value == amountMicrousd` to create trading collateral.
 
 ## Not Included
 
@@ -81,3 +82,5 @@ PM_MAKER_PRIVATE_KEY=0xyourprivatekey \
 PM_RPC_URL=https://api.testnet.abs.xyz \
 bun run ./examples/wallet_issue_faucet_deposit.ts
 ```
+
+`wallet_issue_faucet_deposit.ts` demonstrates the required collateral conversion step. Without that payable vault deposit, `/api/me` will still show `0` available collateral even if the faucet succeeded.
