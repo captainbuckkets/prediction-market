@@ -1,0 +1,31 @@
+{
+  "port": 3002,
+  "basePath": "/prediction-markets",
+  "binanceFuturesStreamUrl": "wss://fstream.binance.com/stream?streams=btcusdt@aggTrade/btcusdt@bookTicker",
+  "symbol": "BTCUSDT",
+  "databaseUrl": "postgres://USERNAME:PASSWORD@localhost:5432/prediction_markets",
+  "nonceRelayMode": "disabled",
+  "fillSettlementMode": "offchain",
+  "settlementMode": "offchain",
+  "abstractTestnetRpcUrl": "https://api.testnet.abs.xyz",
+  "nonceManagerAddress": "0x0000000000000000000000000000000000000000",
+  "nonceRelayPrivateKey": "0xYOUR_PRIVATE_KEY",
+  "testnetRefundAddress": null,
+  "testnetBridgeRecipient": "0x0000000000000000000000000000000000000000",
+  "testnetMakerAddress": "0x0000000000000000000000000000000000000000",
+  "testnetMarketId": null,
+  "testnetNonce": null,
+  "agentApiKeys": [
+    {
+      "key": "pmk_your_agent_key",
+      "agentId": "local-dev-agent",
+      "label": "Local Dev Agent"
+    }
+  ],
+  "fillManagerAddress": "0x0000000000000000000000000000000000000000",
+  "settlementManagerAddress": "0x0000000000000000000000000000000000000000",
+  "vaultAddress": "0x0000000000000000000000000000000000000000",
+  "clearinghouseAddress": "0x0000000000000000000000000000000000000000",
+  "orderSigningVerifyingContract": "0x0000000000000000000000000000000000000000",
+  "testnetMakerPrivateKey": "0xYOUR_PRIVATE_KEY"
+}

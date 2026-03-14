@@ -1,0 +1,13 @@
+node_modules/
+dist/
+coverage/
+
+__pycache__/
+*.pyc
+
+server.log
+
+config.local.json
+config.json
+
+.DS_Store

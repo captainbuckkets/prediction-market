@@ -1,0 +1,46 @@
+{
+  "name": "prediction-markets",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./agent-client": {
+      "types": "./src/agent-client.ts",
+      "import": "./dist/agent-client.js",
+      "default": "./dist/agent-client.js"
+    }
+  },
+  "scripts": {
+    "build": "bun build ./src/browser/wallet.js --outfile ./public/wallet.bundle.js --target browser",
+    "build:agent-client": "bun build ./src/agent-client.ts --outfile ./dist/agent-client.js --target node",
+    "bridge:abstract-testnet": "bun run ./scripts/bridge-to-abstract-testnet.js",
+    "compile:clearinghouse": "bun run ./scripts/compile-clearinghouse.js",
+    "compile:fill-manager": "bun run ./scripts/compile-fill-manager.js",
+    "compile:nonce-manager": "bun run ./scripts/compile-nonce-manager.js",
+    "compile:settlement-manager": "bun run ./scripts/compile-settlement-manager.js",
+    "compile:vault": "bun run ./scripts/compile-vault.js",
+    "deploy:clearinghouse": "bun run ./scripts/deploy-clearinghouse.js",
+    "deploy:fill-manager": "bun run ./scripts/deploy-fill-manager.js",
+    "deploy:nonce-manager": "bun run ./scripts/deploy-nonce-manager.js",
+    "deploy:settlement-manager": "bun run ./scripts/deploy-settlement-manager.js",
+    "deploy:vault": "bun run ./scripts/deploy-vault.js",
+    "reconcile:chain-history": "bun run ./scripts/reconcile-chain-history.js",
+    "wallet:generate": "node ./scripts/wallet-generate.js",
+    "wallet:balance": "node ./scripts/wallet-balance.js",
+    "wallet:vault-state": "node ./scripts/wallet-vault-state.js",
+    "wallet:fund": "node ./scripts/wallet-fund.js",
+    "wallet:sweep": "node ./scripts/wallet-sweep.js",
+    "wallet:ready-check": "node ./scripts/wallet-ready-check.js",
+    "testnet:clearinghouse": "bun run ./scripts/test-clearinghouse-testnet.js",
+    "testnet:fill-manager": "bun run ./scripts/test-fill-manager-testnet.js",
+    "testnet:nonce-manager": "bun run ./scripts/test-nonce-manager-testnet.js",
+    "testnet:server-reconciliation-flow": "bun run ./scripts/test-server-reconciliation-flow-testnet.js",
+    "testnet:settlement-manager": "bun run ./scripts/test-settlement-manager-testnet.js"
+  },
+  "dependencies": {
+    "@abstract-foundation/agw-client": "^1.11.0",
+    "ganache": "^7.9.2",
+    "pg": "^8.20.0",
+    "solc": "^0.8.30",
+    "viem": "^2.47.2"
+  }
+}
