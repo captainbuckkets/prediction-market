@@ -5,6 +5,7 @@ These examples talk directly to the prediction markets agent API and websocket.
 Files:
 - `wallet_issue_key.ts`: TypeScript example that requests a wallet auth challenge, signs it, issues a normal API key, and verifies the key on `/api/me`
 - `wallet_issue_key_and_faucet.ts`: TypeScript example that issues a wallet-bound API key, requests faucet funding, polls faucet status, and verifies the key on `/api/me`
+- `wallet_issue_faucet_deposit.ts`: TypeScript example that issues a wallet-bound API key, requests faucet funding, deposits test collateral into the vault from the wallet, and verifies the updated agent state on `/api/me`
 - `agent_demo.js`: JavaScript demo for Bun or modern Node.js with global `fetch` and `WebSocket`
 - `agent_demo.py`: Python demo using the reusable Python client
 - `agent_demo.ts`: typed TypeScript version of the JavaScript flow
@@ -84,6 +85,15 @@ Wallet key issuance plus faucet funding:
 ```sh
 cd /root/prediction-markets
 PM_MAKER_PRIVATE_KEY=0x... bun run ./examples/wallet_issue_key_and_faucet.ts
+```
+
+Wallet key issuance plus faucet funding and vault deposit:
+
+```sh
+cd /root/prediction-markets
+PM_MAKER_PRIVATE_KEY=0x... \
+PM_RPC_URL=https://api.testnet.abs.xyz \
+bun run ./examples/wallet_issue_faucet_deposit.ts
 ```
 
 Hybrid websocket observe + REST mutate:
