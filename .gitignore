@@ -1,6 +1,8 @@
 node_modules/
 dist/
 coverage/
+!dist/
+!dist/agent-client.js
 
 __pycache__/
 *.pyc
@@ -11,3 +13,13 @@ config.local.json
 config.json
 
 .DS_Store
+
+artifacts/
+contracts/
+public/
+scripts/
+tests/
+src/browser/
+server.js
+src/monitoring.js
+src/onchain/
