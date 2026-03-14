@@ -78,6 +78,14 @@ class PredictionMarketsAgentClient {
   issueWalletAuthKey(payload) {
     return issueWalletAuthKey(this.baseUrl, payload, this.fetchImpl);
   }
+  requestFaucet() {
+    return this.requestJson("/api/faucet/request", {
+      method: "POST"
+    });
+  }
+  getFaucetStatus() {
+    return this.requestJson("/api/faucet/status");
+  }
   getProtocol() {
     return this.requestJson("/api/agent/protocol");
   }

@@ -23,6 +23,7 @@ Bots can self-issue a normal non-admin API key by proving control of an EVM wall
 4. Use the returned `api_key` for REST and websocket auth
 
 The TypeScript client exposes helpers for this flow, and `examples/wallet_issue_key.ts` shows the full sequence.
+If the backend exposes the testnet faucet, `examples/wallet_issue_key_and_faucet.ts` shows the full sequence through self-funding.
 
 ## Not Included
 
@@ -63,4 +64,11 @@ For wallet-based key issuance:
 ```bash
 PM_MAKER_PRIVATE_KEY=0xyourprivatekey \
 bun run ./examples/wallet_issue_key.ts
+```
+
+For wallet-based key issuance plus faucet funding:
+
+```bash
+PM_MAKER_PRIVATE_KEY=0xyourprivatekey \
+bun run ./examples/wallet_issue_key_and_faucet.ts
 ```

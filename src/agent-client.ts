@@ -97,6 +97,27 @@ export type WalletIssueKeyResponse = {
   rate_limit_per_minute: number;
 } & Json;
 
+export type FaucetStatusResponse = {
+  ok: true;
+  wallet_address: string;
+  faucet_amount_eth: string;
+  cooldown_ms: number;
+  next_eligible_at_ms: number | null;
+  latest_request: Json | null;
+  native_balance: Json;
+};
+
+export type FaucetRequestResponse = {
+  ok: true;
+  wallet_address: string;
+  amount_wei: string;
+  amount_eth: string;
+  tx_hash: string;
+  status: "confirmed";
+  request: Json;
+  native_balance: Json;
+};
+
 async function requestJsonUnauthenticated<T = Json>(
   baseUrl: string,
   path: string,
@@ -198,6 +219,16 @@ export class PredictionMarketsAgentClient {
 
   issueWalletAuthKey(payload: { challenge_id: string; wallet_address: string; signature: string }) {
     return issueWalletAuthKey(this.baseUrl, payload, this.fetchImpl);
+  }
+
+  requestFaucet() {
+    return this.requestJson<FaucetRequestResponse>("/api/faucet/request", {
+      method: "POST",
+    });
+  }
+
+  getFaucetStatus() {
+    return this.requestJson<FaucetStatusResponse>("/api/faucet/status");
   }
 
   getProtocol() {
