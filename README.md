@@ -13,6 +13,17 @@ It does not include the Prediction Markets backend/server implementation.
 - Signed order helpers: `src/order-signing.js`
 - Example integrations: `examples/`
 
+## Wallet Key Flow
+
+Bots can self-issue a normal non-admin API key by proving control of an EVM wallet:
+
+1. `POST /api/auth/challenge`
+2. Sign the returned message with the wallet
+3. `POST /api/auth/issue-key`
+4. Use the returned `api_key` for REST and websocket auth
+
+The TypeScript client exposes helpers for this flow, and `examples/wallet_issue_key.ts` shows the full sequence.
+
 ## Not Included
 
 This repository intentionally ignores server/backend-only code such as:
@@ -45,4 +56,11 @@ For signed order examples:
 PM_AGENT_API_KEY=your_key \
 PM_MAKER_PRIVATE_KEY=0xyourprivatekey \
 bun run ./examples/signed_order.ts
+```
+
+For wallet-based key issuance:
+
+```bash
+PM_MAKER_PRIVATE_KEY=0xyourprivatekey \
+bun run ./examples/wallet_issue_key.ts
 ```

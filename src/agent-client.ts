@@ -1,4 +1,5 @@
 export type Json = Record<string, unknown>;
+export type FetchLike = typeof fetch;
 
 export type AgentScope =
   | "market:read"
@@ -79,6 +80,65 @@ export type PlaceOrderPayload = {
   signature?: string;
 };
 
+export type WalletAuthChallengeResponse = {
+  ok: true;
+  challenge_id: string;
+  wallet_address: string;
+  message: string;
+  expires_at: number;
+};
+
+export type WalletIssueKeyResponse = {
+  ok: true;
+  api_key: string;
+  agent_id: string;
+  wallet_address: string;
+  scopes: AgentScope[];
+  rate_limit_per_minute: number;
+} & Json;
+
+async function requestJsonUnauthenticated<T = Json>(
+  baseUrl: string,
+  path: string,
+  fetchImpl: FetchLike = fetch,
+  init: RequestInit = {},
+): Promise<T> {
+  const response = await fetchImpl(`${baseUrl.replace(/\/+$/, "")}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...(init.headers || {}),
+    },
+  });
+  const payload = (await response.json().catch(() => ({}))) as T & { error?: string };
+  if (!response.ok) {
+    throw new Error(payload.error || `${path} failed with ${response.status}`);
+  }
+  return payload;
+}
+
+export function requestWalletAuthChallenge(
+  baseUrl: string,
+  walletAddress: string,
+  fetchImpl?: FetchLike,
+) {
+  return requestJsonUnauthenticated<WalletAuthChallengeResponse>(baseUrl, "/api/auth/challenge", fetchImpl, {
+    method: "POST",
+    body: JSON.stringify({ wallet_address: walletAddress }),
+  });
+}
+
+export function issueWalletAuthKey(
+  baseUrl: string,
+  payload: { challenge_id: string; wallet_address: string; signature: string },
+  fetchImpl?: FetchLike,
+) {
+  return requestJsonUnauthenticated<WalletIssueKeyResponse>(baseUrl, "/api/auth/issue-key", fetchImpl, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
 export class PredictionMarketsAgentClient {
   readonly baseUrl: string;
   readonly apiKey: string;
@@ -130,6 +190,14 @@ export class PredictionMarketsAgentClient {
 
   getStatus() {
     return this.requestJson("/api/status");
+  }
+
+  requestWalletAuthChallenge(walletAddress: string) {
+    return requestWalletAuthChallenge(this.baseUrl, walletAddress, this.fetchImpl);
+  }
+
+  issueWalletAuthKey(payload: { challenge_id: string; wallet_address: string; signature: string }) {
+    return issueWalletAuthKey(this.baseUrl, payload, this.fetchImpl);
   }
 
   getProtocol() {

@@ -1,4 +1,31 @@
 // src/agent-client.ts
+async function requestJsonUnauthenticated(baseUrl, path, fetchImpl = fetch, init = {}) {
+  const response = await fetchImpl(`${baseUrl.replace(/\/+$/, "")}${path}`, {
+    ...init,
+    headers: {
+      "Content-Type": "application/json",
+      ...init.headers || {}
+    }
+  });
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(payload.error || `${path} failed with ${response.status}`);
+  }
+  return payload;
+}
+function requestWalletAuthChallenge(baseUrl, walletAddress, fetchImpl) {
+  return requestJsonUnauthenticated(baseUrl, "/api/auth/challenge", fetchImpl, {
+    method: "POST",
+    body: JSON.stringify({ wallet_address: walletAddress })
+  });
+}
+function issueWalletAuthKey(baseUrl, payload, fetchImpl) {
+  return requestJsonUnauthenticated(baseUrl, "/api/auth/issue-key", fetchImpl, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
 class PredictionMarketsAgentClient {
   baseUrl;
   apiKey;
@@ -44,6 +71,12 @@ class PredictionMarketsAgentClient {
   }
   getStatus() {
     return this.requestJson("/api/status");
+  }
+  requestWalletAuthChallenge(walletAddress) {
+    return requestWalletAuthChallenge(this.baseUrl, walletAddress, this.fetchImpl);
+  }
+  issueWalletAuthKey(payload) {
+    return issueWalletAuthKey(this.baseUrl, payload, this.fetchImpl);
   }
   getProtocol() {
     return this.requestJson("/api/agent/protocol");
@@ -220,5 +253,7 @@ class PredictionMarketsAgentClient {
   }
 }
 export {
+  requestWalletAuthChallenge,
+  issueWalletAuthKey,
   PredictionMarketsAgentClient
 };

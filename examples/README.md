@@ -3,6 +3,7 @@
 These examples talk directly to the prediction markets agent API and websocket.
 
 Files:
+- `wallet_issue_key.ts`: TypeScript example that requests a wallet auth challenge, signs it, issues a normal API key, and verifies the key on `/api/me`
 - `agent_demo.js`: JavaScript demo for Bun or modern Node.js with global `fetch` and `WebSocket`
 - `agent_demo.py`: Python demo using the reusable Python client
 - `agent_demo.ts`: typed TypeScript version of the JavaScript flow
@@ -20,6 +21,8 @@ Environment:
   - default: `http://127.0.0.1:3002/prediction-markets`
 - `PM_AGENT_API_KEY`
   - required
+- `PM_MAKER_PRIVATE_KEY`
+  - required for wallet key issuance and signed order examples
 - `PM_PLACE_ORDER`
   - optional: set to `1` to place a sample order after bootstrap
 
@@ -68,6 +71,13 @@ cd /root/prediction-markets
 PM_AGENT_API_KEY=local-dev-agent-key bun run ./examples/agent_demo.ts
 ```
 
+Wallet key issuance:
+
+```sh
+cd /root/prediction-markets
+PM_MAKER_PRIVATE_KEY=0x... bun run ./examples/wallet_issue_key.ts
+```
+
 Hybrid websocket observe + REST mutate:
 
 ```sh
@@ -87,14 +97,26 @@ bun run ./examples/signed_order.ts
 Reusable TypeScript client:
 
 ```ts
-import { PredictionMarketsAgentClient } from "../src/agent-client.ts";
+import {
+  PredictionMarketsAgentClient,
+  issueWalletAuthKey,
+  requestWalletAuthChallenge,
+} from "../src/agent-client.ts";
 
-const client = new PredictionMarketsAgentClient({
-  baseUrl: "http://127.0.0.1:3002/prediction-markets",
-  apiKey: process.env.PM_AGENT_API_KEY!,
-  reconnect: true,
+const baseUrl = "http://127.0.0.1:3002/prediction-markets";
+const challenge = await requestWalletAuthChallenge(baseUrl, wallet.address);
+const signature = await wallet.signMessage({ message: challenge.message });
+const issued = await issueWalletAuthKey(baseUrl, {
+  challenge_id: challenge.challenge_id,
+  wallet_address: wallet.address,
+  signature,
 });
 
+const client = new PredictionMarketsAgentClient({
+  baseUrl,
+  apiKey: issued.api_key,
+  reconnect: true,
+});
 const orders = await client.getOrders();
 client.onMessage = message => {
   console.log(message.type, message.payload);
